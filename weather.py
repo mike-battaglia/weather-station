@@ -4,6 +4,10 @@ import requests
 from datetime import datetime
 import pytz
 from math import log, exp
+import os
+
+# Get the API key from environment variables
+api_key = os.getenv('WEATHER_API_KEY')
 
 # Sensor settings
 port = 1
@@ -41,17 +45,18 @@ def calculate_feels_like(temp_c, humidity, wind_speed_mps):
         hi_f += -0.22475541*temp_f*humidity - 6.83783e-3*temp_f**2
         hi_f += -5.481717e-2*humidity**2 + 1.22874e-3*temp_f**2*humidity
         hi_f += 8.5282e-4*temp_f*humidity**2 - 1.99e-6*temp_f**2*humidity**2
-        feels_like_c = (hi_f - 32) * 5/9
+        feels_like_f = hi_f
     elif temp_c <= 10 and wind_speed_mps > 1.3:
         # Wind Chill calculation
-        wc_c = 13.12 + 0.6215*temp_c - 11.37*wind_speed_mps**0.16 + 0.3965*temp_c*wind_speed_mps**0.16
-        feels_like_c = wc_c
+        wc_f = 35.74 + 0.6215*temp_f - 35.75*wind_speed_mph**0.16 + 0.4275*temp_f*wind_speed_mph**0.16
+        feels_like_f = wc_f
     else:
         # Apparent Temperature calculation
         e = humidity / 100 * 6.105 * exp(17.27 * temp_c / (237.7 + temp_c))
         feels_like_c = temp_c + 0.33 * e - 0.70 * wind_speed_mps - 4.00
+        feels_like_f = feels_like_c * 9/5 + 32
 
-    return feels_like_c
+    return feels_like_f
 
 def get_additional_data():
     # Free API: Open-Meteo
@@ -78,7 +83,7 @@ def send_data(data):
     url = 'https://garyweather.com/wp-json/custom/v1/weather'
     headers = {
         'Content-Type': 'application/json',
-        'X-API-Key': 'your_pre_shared_api_key'  # Replace with your actual key
+        'X-API-Key': api_key  # Use the API key defined above
     }
     try:
         response = requests.post(url, json=data, headers=headers)
@@ -88,29 +93,30 @@ def send_data(data):
 
 def main():
     temp_c, humidity, pressure, timestamp = get_sensor_data()
-    dew_point = calculate_dew_point(temp_c, humidity)
+    dew_point_c = calculate_dew_point(temp_c, humidity)
     wind_speed, wind_direction, uv_index, cloud_cover, visibility = get_additional_data()
 
-    # Convert wind speed to m/s if necessary
-    if wind_speed is not None:
-        wind_speed_mps = wind_speed / 3.6  # Assuming wind_speed is in km/h
-    else:
-        wind_speed_mps = 0
+    # Convert units to imperial
+    temp_f = temp_c * 9/5 + 32
+    pressure_inhg = pressure * 0.02953  # Convert hPa to inHg
+    dew_point_f = dew_point_c * 9/5 + 32
+    wind_speed_mph = wind_speed / 1.609 if wind_speed is not None else 0  # Assuming wind_speed is in km/h
+    visibility_miles = visibility * 0.000621371 if visibility is not None else None  # Convert meters to miles
 
-    feels_like = calculate_feels_like(temp_c, humidity, wind_speed_mps)
+    feels_like_f = calculate_feels_like(temp_c, humidity, wind_speed_mph / 2.23694)  # Convert mph back to m/s for calculation
 
     data = {
         'timestamp': timestamp,
-        'temperature_c': round(temp_c, 2),
+        'temperature_f': round(temp_f, 2),
         'humidity_percent': round(humidity, 2),
-        'pressure_hpa': round(pressure, 2),
-        'dew_point_c': round(dew_point, 2),
-        'feels_like_c': round(feels_like, 2),
-        'wind_speed_mps': round(wind_speed_mps, 2) if wind_speed_mps else None,
+        'pressure_inhg': round(pressure_inhg, 2),
+        'dew_point_f': round(dew_point_f, 2),
+        'feels_like_f': round(feels_like_f, 2),
+        'wind_speed_mph': round(wind_speed_mph, 2) if wind_speed_mph else None,
         'wind_direction_degrees': wind_direction,
         'uv_index': uv_index,
         'cloud_cover_percent': cloud_cover,
-        'visibility_meters': visibility
+        'visibility_miles': visibility_miles
     }
     print(data)
     send_data(data)
