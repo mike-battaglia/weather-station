@@ -13,11 +13,11 @@ openmeteo = openmeteo_requests.Client(session = retry_session)
 # The order of variables in hourly or daily is important to assign them correctly below
 url = "https://api.open-meteo.com/v1/forecast"
 params = {
-	"latitude": 52.52,
-	"longitude": 13.41,
+	"latitude": 31.3173151,
+	"longitude": -95.4564265,
 	"current": ["temperature_2m", "relative_humidity_2m", "apparent_temperature", "is_day", "precipitation", "rain", "showers", "snowfall", "weather_code", "cloud_cover", "pressure_msl", "surface_pressure", "wind_speed_10m", "wind_direction_10m", "wind_gusts_10m"],
-	"minutely_15": ["temperature_2m", "relative_humidity_2m", "dew_point_2m", "apparent_temperature", "precipitation", "rain", "snowfall", "snowfall_height", "freezing_level_height", "sunshine_duration", "weather_code", "wind_speed_10m", "wind_speed_80m", "wind_direction_10m", "wind_direction_80m", "wind_gusts_10m", "visibility", "cape", "lightning_potential", "is_day"],
-	"hourly": ["temperature_2m", "relative_humidity_2m", "dew_point_2m", "apparent_temperature", "precipitation_probability", "precipitation", "rain", "showers", "snowfall", "weather_code", "surface_pressure", "cloud_cover", "cloud_cover_low", "cloud_cover_mid", "cloud_cover_high", "visibility", "evapotranspiration", "et0_fao_evapotranspiration", "vapour_pressure_deficit", "wind_speed_10m", "wind_speed_80m", "wind_speed_120m", "wind_speed_180m", "wind_direction_10m", "wind_direction_80m", "wind_direction_120m", "wind_direction_180m", "wind_gusts_10m", "temperature_80m", "temperature_120m", "temperature_180m", "soil_temperature_0cm", "soil_temperature_6cm", "soil_temperature_18cm", "soil_temperature_54cm", "soil_moisture_0_to_1cm", "soil_moisture_1_to_3cm", "soil_moisture_3_to_9cm", "soil_moisture_9_to_27cm", "soil_moisture_27_to_81cm", "uv_index", "uv_index_clear_sky", "is_day", "sunshine_duration", "total_column_integrated_water_vapour", "cape", "lifted_index", "convective_inhibition", "freezing_level_height", "boundary_layer_height"],
+	"minutely_15": ["temperature_2m", "relative_humidity_2m", "dew_point_2m", "apparent_temperature", "precipitation", "rain", "snowfall", "snowfall_height", "freezing_level_height", "sunshine_duration", "weather_code", "wind_speed_10m", "wind_speed_80m", "wind_direction_10m", "wind_direction_80m", "wind_gusts_10m", "visibility", "cape", "lightning_potential", "is_day", "shortwave_radiation", "direct_radiation", "diffuse_radiation", "direct_normal_irradiance", "global_tilted_irradiance", "terrestrial_radiation"],
+	"hourly": ["temperature_2m", "relative_humidity_2m", "dew_point_2m", "apparent_temperature", "precipitation_probability", "precipitation", "rain", "showers", "snowfall", "snow_depth", "weather_code", "pressure_msl", "surface_pressure", "cloud_cover", "cloud_cover_low", "cloud_cover_mid", "cloud_cover_high", "visibility", "evapotranspiration", "et0_fao_evapotranspiration", "vapour_pressure_deficit", "wind_speed_10m", "wind_speed_80m", "wind_speed_120m", "wind_speed_180m", "wind_direction_10m", "wind_direction_80m", "wind_direction_120m", "wind_direction_180m", "wind_gusts_10m", "temperature_80m", "temperature_120m", "temperature_180m", "soil_temperature_0cm", "soil_temperature_6cm", "soil_temperature_18cm", "soil_temperature_54cm", "soil_moisture_0_to_1cm", "soil_moisture_1_to_3cm", "soil_moisture_3_to_9cm", "soil_moisture_9_to_27cm", "soil_moisture_27_to_81cm", "uv_index", "uv_index_clear_sky", "is_day", "sunshine_duration", "total_column_integrated_water_vapour", "cape", "lifted_index", "convective_inhibition", "freezing_level_height", "boundary_layer_height", "shortwave_radiation", "direct_radiation", "diffuse_radiation", "direct_normal_irradiance", "global_tilted_irradiance", "terrestrial_radiation"],
 	"daily": ["weather_code", "temperature_2m_max", "temperature_2m_min", "apparent_temperature_max", "apparent_temperature_min", "sunrise", "sunset", "daylight_duration", "sunshine_duration", "uv_index_max", "uv_index_clear_sky_max", "precipitation_sum", "rain_sum", "showers_sum", "snowfall_sum", "precipitation_hours", "precipitation_probability_max", "wind_speed_10m_max", "wind_gusts_10m_max", "wind_direction_10m_dominant", "shortwave_radiation_sum", "et0_fao_evapotranspiration"],
 	"temperature_unit": "fahrenheit",
 	"wind_speed_unit": "mph",
@@ -29,7 +29,7 @@ params = {
 	"forecast_days": 14,
 	"forecast_hours": 24,
 	"forecast_minutely_15": 96,
-	"models": "best_match"
+	"models": ["best_match", "gfs_seamless", "gfs_global", "gfs_graphcast025"]
 }
 responses = openmeteo.weather_api(url, params=params)
 
@@ -97,6 +97,12 @@ minutely_15_visibility = minutely_15.Variables(16).ValuesAsNumpy()
 minutely_15_cape = minutely_15.Variables(17).ValuesAsNumpy()
 minutely_15_lightning_potential = minutely_15.Variables(18).ValuesAsNumpy()
 minutely_15_is_day = minutely_15.Variables(19).ValuesAsNumpy()
+minutely_15_shortwave_radiation = minutely_15.Variables(20).ValuesAsNumpy()
+minutely_15_direct_radiation = minutely_15.Variables(21).ValuesAsNumpy()
+minutely_15_diffuse_radiation = minutely_15.Variables(22).ValuesAsNumpy()
+minutely_15_direct_normal_irradiance = minutely_15.Variables(23).ValuesAsNumpy()
+minutely_15_global_tilted_irradiance = minutely_15.Variables(24).ValuesAsNumpy()
+minutely_15_terrestrial_radiation = minutely_15.Variables(25).ValuesAsNumpy()
 
 minutely_15_data = {"date": pd.date_range(
 	start = pd.to_datetime(minutely_15.Time(), unit = "s", utc = True),
@@ -124,6 +130,12 @@ minutely_15_data["visibility"] = minutely_15_visibility
 minutely_15_data["cape"] = minutely_15_cape
 minutely_15_data["lightning_potential"] = minutely_15_lightning_potential
 minutely_15_data["is_day"] = minutely_15_is_day
+minutely_15_data["shortwave_radiation"] = minutely_15_shortwave_radiation
+minutely_15_data["direct_radiation"] = minutely_15_direct_radiation
+minutely_15_data["diffuse_radiation"] = minutely_15_diffuse_radiation
+minutely_15_data["direct_normal_irradiance"] = minutely_15_direct_normal_irradiance
+minutely_15_data["global_tilted_irradiance"] = minutely_15_global_tilted_irradiance
+minutely_15_data["terrestrial_radiation"] = minutely_15_terrestrial_radiation
 
 minutely_15_dataframe = pd.DataFrame(data = minutely_15_data)
 print(minutely_15_dataframe)
@@ -139,47 +151,55 @@ hourly_precipitation = hourly.Variables(5).ValuesAsNumpy()
 hourly_rain = hourly.Variables(6).ValuesAsNumpy()
 hourly_showers = hourly.Variables(7).ValuesAsNumpy()
 hourly_snowfall = hourly.Variables(8).ValuesAsNumpy()
-hourly_weather_code = hourly.Variables(9).ValuesAsNumpy()
-hourly_surface_pressure = hourly.Variables(10).ValuesAsNumpy()
-hourly_cloud_cover = hourly.Variables(11).ValuesAsNumpy()
-hourly_cloud_cover_low = hourly.Variables(12).ValuesAsNumpy()
-hourly_cloud_cover_mid = hourly.Variables(13).ValuesAsNumpy()
-hourly_cloud_cover_high = hourly.Variables(14).ValuesAsNumpy()
-hourly_visibility = hourly.Variables(15).ValuesAsNumpy()
-hourly_evapotranspiration = hourly.Variables(16).ValuesAsNumpy()
-hourly_et0_fao_evapotranspiration = hourly.Variables(17).ValuesAsNumpy()
-hourly_vapour_pressure_deficit = hourly.Variables(18).ValuesAsNumpy()
-hourly_wind_speed_10m = hourly.Variables(19).ValuesAsNumpy()
-hourly_wind_speed_80m = hourly.Variables(20).ValuesAsNumpy()
-hourly_wind_speed_120m = hourly.Variables(21).ValuesAsNumpy()
-hourly_wind_speed_180m = hourly.Variables(22).ValuesAsNumpy()
-hourly_wind_direction_10m = hourly.Variables(23).ValuesAsNumpy()
-hourly_wind_direction_80m = hourly.Variables(24).ValuesAsNumpy()
-hourly_wind_direction_120m = hourly.Variables(25).ValuesAsNumpy()
-hourly_wind_direction_180m = hourly.Variables(26).ValuesAsNumpy()
-hourly_wind_gusts_10m = hourly.Variables(27).ValuesAsNumpy()
-hourly_temperature_80m = hourly.Variables(28).ValuesAsNumpy()
-hourly_temperature_120m = hourly.Variables(29).ValuesAsNumpy()
-hourly_temperature_180m = hourly.Variables(30).ValuesAsNumpy()
-hourly_soil_temperature_0cm = hourly.Variables(31).ValuesAsNumpy()
-hourly_soil_temperature_6cm = hourly.Variables(32).ValuesAsNumpy()
-hourly_soil_temperature_18cm = hourly.Variables(33).ValuesAsNumpy()
-hourly_soil_temperature_54cm = hourly.Variables(34).ValuesAsNumpy()
-hourly_soil_moisture_0_to_1cm = hourly.Variables(35).ValuesAsNumpy()
-hourly_soil_moisture_1_to_3cm = hourly.Variables(36).ValuesAsNumpy()
-hourly_soil_moisture_3_to_9cm = hourly.Variables(37).ValuesAsNumpy()
-hourly_soil_moisture_9_to_27cm = hourly.Variables(38).ValuesAsNumpy()
-hourly_soil_moisture_27_to_81cm = hourly.Variables(39).ValuesAsNumpy()
-hourly_uv_index = hourly.Variables(40).ValuesAsNumpy()
-hourly_uv_index_clear_sky = hourly.Variables(41).ValuesAsNumpy()
-hourly_is_day = hourly.Variables(42).ValuesAsNumpy()
-hourly_sunshine_duration = hourly.Variables(43).ValuesAsNumpy()
-hourly_total_column_integrated_water_vapour = hourly.Variables(44).ValuesAsNumpy()
-hourly_cape = hourly.Variables(45).ValuesAsNumpy()
-hourly_lifted_index = hourly.Variables(46).ValuesAsNumpy()
-hourly_convective_inhibition = hourly.Variables(47).ValuesAsNumpy()
-hourly_freezing_level_height = hourly.Variables(48).ValuesAsNumpy()
-hourly_boundary_layer_height = hourly.Variables(49).ValuesAsNumpy()
+hourly_snow_depth = hourly.Variables(9).ValuesAsNumpy()
+hourly_weather_code = hourly.Variables(10).ValuesAsNumpy()
+hourly_pressure_msl = hourly.Variables(11).ValuesAsNumpy()
+hourly_surface_pressure = hourly.Variables(12).ValuesAsNumpy()
+hourly_cloud_cover = hourly.Variables(13).ValuesAsNumpy()
+hourly_cloud_cover_low = hourly.Variables(14).ValuesAsNumpy()
+hourly_cloud_cover_mid = hourly.Variables(15).ValuesAsNumpy()
+hourly_cloud_cover_high = hourly.Variables(16).ValuesAsNumpy()
+hourly_visibility = hourly.Variables(17).ValuesAsNumpy()
+hourly_evapotranspiration = hourly.Variables(18).ValuesAsNumpy()
+hourly_et0_fao_evapotranspiration = hourly.Variables(19).ValuesAsNumpy()
+hourly_vapour_pressure_deficit = hourly.Variables(20).ValuesAsNumpy()
+hourly_wind_speed_10m = hourly.Variables(21).ValuesAsNumpy()
+hourly_wind_speed_80m = hourly.Variables(22).ValuesAsNumpy()
+hourly_wind_speed_120m = hourly.Variables(23).ValuesAsNumpy()
+hourly_wind_speed_180m = hourly.Variables(24).ValuesAsNumpy()
+hourly_wind_direction_10m = hourly.Variables(25).ValuesAsNumpy()
+hourly_wind_direction_80m = hourly.Variables(26).ValuesAsNumpy()
+hourly_wind_direction_120m = hourly.Variables(27).ValuesAsNumpy()
+hourly_wind_direction_180m = hourly.Variables(28).ValuesAsNumpy()
+hourly_wind_gusts_10m = hourly.Variables(29).ValuesAsNumpy()
+hourly_temperature_80m = hourly.Variables(30).ValuesAsNumpy()
+hourly_temperature_120m = hourly.Variables(31).ValuesAsNumpy()
+hourly_temperature_180m = hourly.Variables(32).ValuesAsNumpy()
+hourly_soil_temperature_0cm = hourly.Variables(33).ValuesAsNumpy()
+hourly_soil_temperature_6cm = hourly.Variables(34).ValuesAsNumpy()
+hourly_soil_temperature_18cm = hourly.Variables(35).ValuesAsNumpy()
+hourly_soil_temperature_54cm = hourly.Variables(36).ValuesAsNumpy()
+hourly_soil_moisture_0_to_1cm = hourly.Variables(37).ValuesAsNumpy()
+hourly_soil_moisture_1_to_3cm = hourly.Variables(38).ValuesAsNumpy()
+hourly_soil_moisture_3_to_9cm = hourly.Variables(39).ValuesAsNumpy()
+hourly_soil_moisture_9_to_27cm = hourly.Variables(40).ValuesAsNumpy()
+hourly_soil_moisture_27_to_81cm = hourly.Variables(41).ValuesAsNumpy()
+hourly_uv_index = hourly.Variables(42).ValuesAsNumpy()
+hourly_uv_index_clear_sky = hourly.Variables(43).ValuesAsNumpy()
+hourly_is_day = hourly.Variables(44).ValuesAsNumpy()
+hourly_sunshine_duration = hourly.Variables(45).ValuesAsNumpy()
+hourly_total_column_integrated_water_vapour = hourly.Variables(46).ValuesAsNumpy()
+hourly_cape = hourly.Variables(47).ValuesAsNumpy()
+hourly_lifted_index = hourly.Variables(48).ValuesAsNumpy()
+hourly_convective_inhibition = hourly.Variables(49).ValuesAsNumpy()
+hourly_freezing_level_height = hourly.Variables(50).ValuesAsNumpy()
+hourly_boundary_layer_height = hourly.Variables(51).ValuesAsNumpy()
+hourly_shortwave_radiation = hourly.Variables(52).ValuesAsNumpy()
+hourly_direct_radiation = hourly.Variables(53).ValuesAsNumpy()
+hourly_diffuse_radiation = hourly.Variables(54).ValuesAsNumpy()
+hourly_direct_normal_irradiance = hourly.Variables(55).ValuesAsNumpy()
+hourly_global_tilted_irradiance = hourly.Variables(56).ValuesAsNumpy()
+hourly_terrestrial_radiation = hourly.Variables(57).ValuesAsNumpy()
 
 hourly_data = {"date": pd.date_range(
 	start = pd.to_datetime(hourly.Time(), unit = "s", utc = True),
@@ -196,7 +216,9 @@ hourly_data["precipitation"] = hourly_precipitation
 hourly_data["rain"] = hourly_rain
 hourly_data["showers"] = hourly_showers
 hourly_data["snowfall"] = hourly_snowfall
+hourly_data["snow_depth"] = hourly_snow_depth
 hourly_data["weather_code"] = hourly_weather_code
+hourly_data["pressure_msl"] = hourly_pressure_msl
 hourly_data["surface_pressure"] = hourly_surface_pressure
 hourly_data["cloud_cover"] = hourly_cloud_cover
 hourly_data["cloud_cover_low"] = hourly_cloud_cover_low
@@ -237,6 +259,12 @@ hourly_data["lifted_index"] = hourly_lifted_index
 hourly_data["convective_inhibition"] = hourly_convective_inhibition
 hourly_data["freezing_level_height"] = hourly_freezing_level_height
 hourly_data["boundary_layer_height"] = hourly_boundary_layer_height
+hourly_data["shortwave_radiation"] = hourly_shortwave_radiation
+hourly_data["direct_radiation"] = hourly_direct_radiation
+hourly_data["diffuse_radiation"] = hourly_diffuse_radiation
+hourly_data["direct_normal_irradiance"] = hourly_direct_normal_irradiance
+hourly_data["global_tilted_irradiance"] = hourly_global_tilted_irradiance
+hourly_data["terrestrial_radiation"] = hourly_terrestrial_radiation
 
 hourly_dataframe = pd.DataFrame(data = hourly_data)
 print(hourly_dataframe)
