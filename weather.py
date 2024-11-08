@@ -12,6 +12,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Get the API key from environment variables
+WEATHER_DOMAIN = os.getenv('WEATHER_DOMAIN')
 api_key = os.getenv('WEATHER_API_KEY')
 if not api_key:
     raise EnvironmentError("Please set the WEATHER_API_KEY environment variable")
@@ -97,7 +98,7 @@ def convert_to_imperial(temp_c, pressure, wind_speed_mps, visibility_m):
     return temp_f, pressure_inhg, wind_speed_mph, visibility_miles
 
 def send_data(data):
-    url = 'https://garyweather.com/wp-json/custom/v1/weather'
+    url = WEATHER_DOMAIN
     headers = {
         'Content-Type': 'application/json',
         'X-API-Key': api_key  # Use the API key defined above
