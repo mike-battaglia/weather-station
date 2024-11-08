@@ -7,9 +7,6 @@ from math import log, exp
 import os
 import logging
 
-# Set up logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
 
 # Get the API key from environment variables
 WEATHER_DOMAIN = os.getenv('WEATHER_DOMAIN')
@@ -28,25 +25,29 @@ timezone = pytz.timezone('America/Chicago')
 
 def get_sensor_data():
     try:
+        print("Getting sensor data...")
         data = bme280.sample(bus, address, calibration_params)
         temp_c = data.temperature
         humidity = data.humidity
         pressure = data.pressure
         timestamp = datetime.now(timezone).strftime('%Y-%m-%d %H:%M:%S')
+        print(f"Sensor Data - Temperature: {temp_c}°C, Humidity: {humidity}%, Pressure: {pressure} hPa")
         return temp_c, humidity, pressure, timestamp
     except Exception as e:
-        logger.error(f"Error reading sensor data: {e}")
+        print(f"Error getting sensor data: {e}")
         return None, None, None, None
 
 def calculate_dew_point(temp_c, humidity):
-    # Dew Point calculation using Magnus formula
+    print(f"Calculating dew point for Temperature: {temp_c}°C and Humidity: {humidity}%...")
     b = 17.62
     c = 243.12
     gamma = (b * temp_c / (c + temp_c)) + log(humidity / 100.0)
     dew_point = (c * gamma) / (b - gamma)
+    print(f"Dew Point: {dew_point}°C")
     return dew_point
 
 def calculate_feels_like(temp_c, humidity, wind_speed_mps):
+    print(f"Calculating feels like temperature for Temperature: {temp_c}°C, Humidity: {humidity}%, Wind Speed: {wind_speed_mps} m/s...")
     # Determine which formula to use
     if temp_c >= 26.7 and humidity >= 40:
         # Heat Index calculation (using Celsius)
@@ -63,9 +64,11 @@ def calculate_feels_like(temp_c, humidity, wind_speed_mps):
         e = humidity / 100 * 6.105 * exp(17.27 * temp_c / (237.7 + temp_c))
         feels_like_c = temp_c + 0.33 * e - 0.70 * wind_speed_mps - 4.00
 
+    print(f"Feels Like Temperature: {feels_like_c}°C")
     return feels_like_c
 
-def get_additional_data():
+def get_forecast_data():
+    print("Getting additional weather data...")
     # Free API: Open-Meteo
     api_url = (
         "https://api.open-meteo.com/v1/forecast?"
@@ -82,22 +85,26 @@ def get_additional_data():
             cloud_cover = data.get('hourly', {}).get('cloudcover', [None])[0]
             visibility = data.get('hourly', {}).get('visibility', [None])[0]
             uv_index = data.get('hourly', {}).get('uv_index', [None])[0]
+            print(f"Additional Data - Wind Speed: {wind_speed} m/s, Wind Direction: {wind_direction}°, Cloud Cover: {cloud_cover}%, Visibility: {visibility} m")
             return wind_speed, wind_direction, uv_index, cloud_cover, visibility
         else:
-            logger.error(f"Failed to get additional weather data: {response.status_code}")
+            print(f"Failed to get additional weather data. Status code: {response.status_code}")
             return None, None, None, None, None
     except Exception as e:
-        logger.error(f"Error fetching additional data: {e}")
+        print(f"Error getting additional data: {e}")
         return None, None, None, None, None
 
 def convert_to_imperial(temp_c, pressure, wind_speed_mps, visibility_m):
+    print(f"Converting units to imperial for Temperature: {temp_c}°C, Pressure: {pressure} hPa, Wind Speed: {wind_speed_mps} m/s, Visibility: {visibility_m} m...")
     temp_f = temp_c * 9/5 + 32
     pressure_inhg = pressure * 0.02953
     wind_speed_mph = wind_speed_mps * 2.23694 if wind_speed_mps and wind_speed_mps > 0 else 0
     visibility_miles = visibility_m * 0.000621371 if visibility_m is not None else None
+    print(f"Converted Values - Temperature: {temp_f}°F, Pressure: {pressure_inhg} inHg, Wind Speed: {wind_speed_mph} mph, Visibility: {visibility_miles} miles")
     return temp_f, pressure_inhg, wind_speed_mph, visibility_miles
 
 def send_data(data):
+    print(f"Sending data: {data}")
     url = WEATHER_DOMAIN
     headers = {
         'Content-Type': 'application/json',
@@ -105,18 +112,18 @@ def send_data(data):
     }
     try:
         response = requests.post(url, json=data, headers=headers)
-        logger.info(f"Data sent. Server responded with: {response.status_code}")
+        print(f"Data sent. Server responded with status code: {response.status_code}")
     except Exception as e:
-        logger.error(f"Failed to send data: {e}")
+        print(f"Failed to send data: {e}")
 
 def main():
     temp_c, humidity, pressure, timestamp = get_sensor_data()
     if temp_c is None or humidity is None or pressure is None:
-        logger.error("Sensor data is unavailable. Exiting.")
+        print("Sensor data is unavailable. Exiting.")
         return
 
     dew_point_c = calculate_dew_point(temp_c, humidity)
-    wind_speed, wind_direction, uv_index, cloud_cover, visibility = get_additional_data()
+    wind_speed, wind_direction, uv_index, cloud_cover, visibility = get_forecast_data()
 
     feels_like_c = calculate_feels_like(temp_c, humidity, wind_speed)
 
@@ -138,7 +145,7 @@ def main():
         'cloud_cover_percent': cloud_cover,
         'visibility_miles': visibility_miles
     }
-    logger.info(data)
+    print(f"Final Data: {data}")
     send_data(data)
 
 if __name__ == "__main__":
