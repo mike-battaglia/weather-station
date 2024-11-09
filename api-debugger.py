@@ -326,7 +326,7 @@ aqi_params = {
 	"past_days": 1,
 	"forecast_days": 7
 }
-aqi_responses = openmeteo.weather_api(url, params=params)
+aqi_responses = openmeteo.weather_api(url, params=aqi_params)
 
 # Process first location. Add a for-loop for multiple locations or weather models
 aqi_response = aqi_responses[0]
