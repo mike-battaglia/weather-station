@@ -313,6 +313,7 @@ print(daily_dataframe)
 #
 #
 
+
 # Make sure all required weather variables are listed here
 # The order of variables in hourly or daily is important to assign them correctly below
 aqi_url = "https://air-quality-api.open-meteo.com/v1/air-quality"
@@ -325,117 +326,118 @@ aqi_params = {
 	"past_days": 1,
 	"forecast_days": 7
 }
-responses = openmeteo.weather_api(url, params=params)
+aqi_responses = openmeteo.weather_api(url, params=params)
 
 # Process first location. Add a for-loop for multiple locations or weather models
-response = responses[0]
-print(f"Coordinates {response.Latitude()}°N {response.Longitude()}°E")
-print(f"Elevation {response.Elevation()} m asl")
-print(f"Timezone {response.Timezone()} {response.TimezoneAbbreviation()}")
-print(f"Timezone difference to GMT+0 {response.UtcOffsetSeconds()} s")
+aqi_response = aqi_responses[0]
+print(f"Coordinates {aqi_response.Latitude()}°N {aqi_response.Longitude()}°E")
+print(f"Elevation {aqi_response.Elevation()} m asl")
+print(f"Timezone {aqi_response.Timezone()} {aqi_response.TimezoneAbbreviation()}")
+print(f"Timezone difference to GMT+0 {aqi_response.UtcOffsetSeconds()} s")
 
-# Current values. The order of variables needs to be the same as requested.
-current = response.Current()
-current_us_aqi = current.Variables(0).Value()
-current_pm10 = current.Variables(1).Value()
-current_pm2_5 = current.Variables(2).Value()
-current_carbon_monoxide = current.Variables(3).Value()
-current_nitrogen_dioxide = current.Variables(4).Value()
-current_sulphur_dioxide = current.Variables(5).Value()
-current_ozone = current.Variables(6).Value()
-current_aerosol_optical_depth = current.Variables(7).Value()
-current_dust = current.Variables(8).Value()
-current_uv_index = current.Variables(9).Value()
-current_uv_index_clear_sky = current.Variables(10).Value()
-current_ammonia = current.Variables(11).Value()
-current_alder_pollen = current.Variables(12).Value()
-current_birch_pollen = current.Variables(13).Value()
-current_grass_pollen = current.Variables(14).Value()
-current_mugwort_pollen = current.Variables(15).Value()
-current_olive_pollen = current.Variables(16).Value()
-current_ragweed_pollen = current.Variables(17).Value()
+# aqi_current values. The order of variables needs to be the same as requested.
+aqi_current = aqi_response.Current()
+aqi_current_us_aqi = aqi_current.Variables(0).Value()
+aqi_current_pm10 = aqi_current.Variables(1).Value()
+aqi_current_pm2_5 = aqi_current.Variables(2).Value()
+aqi_current_carbon_monoxide = aqi_current.Variables(3).Value()
+aqi_current_nitrogen_dioxide = aqi_current.Variables(4).Value()
+aqi_current_sulphur_dioxide = aqi_current.Variables(5).Value()
+aqi_current_ozone = aqi_current.Variables(6).Value()
+aqi_current_aerosol_optical_depth = aqi_current.Variables(7).Value()
+aqi_current_dust = aqi_current.Variables(8).Value()
+aqi_current_uv_index = aqi_current.Variables(9).Value()
+aqi_current_uv_index_clear_sky = aqi_current.Variables(10).Value()
+aqi_current_ammonia = aqi_current.Variables(11).Value()
+aqi_current_alder_pollen = aqi_current.Variables(12).Value()
+aqi_current_birch_pollen = aqi_current.Variables(13).Value()
+aqi_current_grass_pollen = aqi_current.Variables(14).Value()
+aqi_current_mugwort_pollen = aqi_current.Variables(15).Value()
+aqi_current_olive_pollen = aqi_current.Variables(16).Value()
+aqi_current_ragweed_pollen = aqi_current.Variables(17).Value()
 
-print(f"Current time {current.Time()}")
-print(f"Current us_aqi {current_us_aqi}")
-print(f"Current pm10 {current_pm10}")
-print(f"Current pm2_5 {current_pm2_5}")
-print(f"Current carbon_monoxide {current_carbon_monoxide}")
-print(f"Current nitrogen_dioxide {current_nitrogen_dioxide}")
-print(f"Current sulphur_dioxide {current_sulphur_dioxide}")
-print(f"Current ozone {current_ozone}")
-print(f"Current aerosol_optical_depth {current_aerosol_optical_depth}")
-print(f"Current dust {current_dust}")
-print(f"Current uv_index {current_uv_index}")
-print(f"Current uv_index_clear_sky {current_uv_index_clear_sky}")
-print(f"Current ammonia {current_ammonia}")
-print(f"Current alder_pollen {current_alder_pollen}")
-print(f"Current birch_pollen {current_birch_pollen}")
-print(f"Current grass_pollen {current_grass_pollen}")
-print(f"Current mugwort_pollen {current_mugwort_pollen}")
-print(f"Current olive_pollen {current_olive_pollen}")
-print(f"Current ragweed_pollen {current_ragweed_pollen}")
+print(f"Current time {aqi_current.Time()}")
+print(f"Current us_aqi {aqi_current_us_aqi}")
+print(f"Current pm10 {aqi_current_pm10}")
+print(f"Current pm2_5 {aqi_current_pm2_5}")
+print(f"Current carbon_monoxide {aqi_current_carbon_monoxide}")
+print(f"Current nitrogen_dioxide {aqi_current_nitrogen_dioxide}")
+print(f"Current sulphur_dioxide {aqi_current_sulphur_dioxide}")
+print(f"Current ozone {aqi_current_ozone}")
+print(f"Current aerosol_optical_depth {aqi_current_aerosol_optical_depth}")
+print(f"Current dust {aqi_current_dust}")
+print(f"Current uv_index {aqi_current_uv_index}")
+print(f"Current uv_index_clear_sky {aqi_current_uv_index_clear_sky}")
+print(f"Current ammonia {aqi_current_ammonia}")
+print(f"Current alder_pollen {aqi_current_alder_pollen}")
+print(f"Current birch_pollen {aqi_current_birch_pollen}")
+print(f"Current grass_pollen {aqi_current_grass_pollen}")
+print(f"Current mugwort_pollen {aqi_current_mugwort_pollen}")
+print(f"Current olive_pollen {aqi_current_olive_pollen}")
+print(f"Current ragweed_pollen {aqi_current_ragweed_pollen}")
 
 # Process hourly data. The order of variables needs to be the same as requested.
-hourly = response.Hourly()
-hourly_pm10 = hourly.Variables(0).ValuesAsNumpy()
-hourly_pm2_5 = hourly.Variables(1).ValuesAsNumpy()
-hourly_carbon_monoxide = hourly.Variables(2).ValuesAsNumpy()
-hourly_carbon_dioxide = hourly.Variables(3).ValuesAsNumpy()
-hourly_nitrogen_dioxide = hourly.Variables(4).ValuesAsNumpy()
-hourly_sulphur_dioxide = hourly.Variables(5).ValuesAsNumpy()
-hourly_ozone = hourly.Variables(6).ValuesAsNumpy()
-hourly_aerosol_optical_depth = hourly.Variables(7).ValuesAsNumpy()
-hourly_dust = hourly.Variables(8).ValuesAsNumpy()
-hourly_uv_index = hourly.Variables(9).ValuesAsNumpy()
-hourly_uv_index_clear_sky = hourly.Variables(10).ValuesAsNumpy()
-hourly_ammonia = hourly.Variables(11).ValuesAsNumpy()
-hourly_methane = hourly.Variables(12).ValuesAsNumpy()
-hourly_alder_pollen = hourly.Variables(13).ValuesAsNumpy()
-hourly_birch_pollen = hourly.Variables(14).ValuesAsNumpy()
-hourly_grass_pollen = hourly.Variables(15).ValuesAsNumpy()
-hourly_mugwort_pollen = hourly.Variables(16).ValuesAsNumpy()
-hourly_olive_pollen = hourly.Variables(17).ValuesAsNumpy()
-hourly_ragweed_pollen = hourly.Variables(18).ValuesAsNumpy()
-hourly_us_aqi = hourly.Variables(19).ValuesAsNumpy()
-hourly_us_aqi_pm2_5 = hourly.Variables(20).ValuesAsNumpy()
-hourly_us_aqi_pm10 = hourly.Variables(21).ValuesAsNumpy()
-hourly_us_aqi_nitrogen_dioxide = hourly.Variables(22).ValuesAsNumpy()
-hourly_us_aqi_carbon_monoxide = hourly.Variables(23).ValuesAsNumpy()
-hourly_us_aqi_ozone = hourly.Variables(24).ValuesAsNumpy()
-hourly_us_aqi_sulphur_dioxide = hourly.Variables(25).ValuesAsNumpy()
+aqi_hourly= aqi_response.Hourly()
+aqi_hourly_pm10 = aqi_hourly.Variables(0).ValuesAsNumpy()
+aqi_hourly_pm2_5 = aqi_hourly.Variables(1).ValuesAsNumpy()
+aqi_hourly_carbon_monoxide = aqi_hourly.Variables(2).ValuesAsNumpy()
+aqi_hourly_carbon_dioxide = aqi_hourly.Variables(3).ValuesAsNumpy()
+aqi_hourly_nitrogen_dioxide = aqi_hourly.Variables(4).ValuesAsNumpy()
+aqi_hourly_sulphur_dioxide = aqi_hourly.Variables(5).ValuesAsNumpy()
+aqi_hourly_ozone = aqi_hourly.Variables(6).ValuesAsNumpy()
+aqi_hourly_aerosol_optical_depth = aqi_hourly.Variables(7).ValuesAsNumpy()
+aqi_hourly_dust = aqi_hourly.Variables(8).ValuesAsNumpy()
+aqi_hourly_uv_index = aqi_hourly.Variables(9).ValuesAsNumpy()
+aqi_hourly_uv_index_clear_sky = aqi_hourly.Variables(10).ValuesAsNumpy()
+aqi_hourly_ammonia = aqi_hourly.Variables(11).ValuesAsNumpy()
+aqi_hourly_methane = aqi_hourly.Variables(12).ValuesAsNumpy()
+aqi_hourly_alder_pollen = aqi_hourly.Variables(13).ValuesAsNumpy()
+aqi_hourly_birch_pollen = aqi_hourly.Variables(14).ValuesAsNumpy()
+aqi_hourly_grass_pollen = aqi_hourly.Variables(15).ValuesAsNumpy()
+aqi_hourly_mugwort_pollen = aqi_hourly.Variables(16).ValuesAsNumpy()
+aqi_hourly_olive_pollen = aqi_hourly.Variables(17).ValuesAsNumpy()
+aqi_hourly_ragweed_pollen = aqi_hourly.Variables(18).ValuesAsNumpy()
+aqi_hourly_us_aqi = aqi_hourly.Variables(19).ValuesAsNumpy()
+aqi_hourly_us_aqi_pm2_5 = aqi_hourly.Variables(20).ValuesAsNumpy()
+aqi_hourly_us_aqi_pm10 = aqi_hourly.Variables(21).ValuesAsNumpy()
+aqi_hourly_us_aqi_nitrogen_dioxide = aqi_hourly.Variables(22).ValuesAsNumpy()
+aqi_hourly_us_aqi_carbon_monoxide = aqi_hourly.Variables(23).ValuesAsNumpy()
+aqi_hourly_us_aqi_ozone = aqi_hourly.Variables(24).ValuesAsNumpy()
+aqi_hourly_us_aqi_sulphur_dioxide = aqi_hourly.Variables(25).ValuesAsNumpy()
 
-hourly_data = {"date": pd.date_range(
-	start = pd.to_datetime(hourly.Time(), unit = "s", utc = True),
-	end = pd.to_datetime(hourly.TimeEnd(), unit = "s", utc = True),
-	freq = pd.Timedelta(seconds = hourly.Interval()),
+aqi_hourly_data = {"date": pd.date_range(
+	start = pd.to_datetime(aqi_hourly.Time(), unit = "s", utc = True),
+	end = pd.to_datetime(aqi_hourly.TimeEnd(), unit = "s", utc = True),
+	freq = pd.Timedelta(seconds = aqi_hourly.Interval()),
 	inclusive = "left"
 )}
-hourly_data["pm10"] = hourly_pm10
-hourly_data["pm2_5"] = hourly_pm2_5
-hourly_data["carbon_monoxide"] = hourly_carbon_monoxide
-hourly_data["carbon_dioxide"] = hourly_carbon_dioxide
-hourly_data["nitrogen_dioxide"] = hourly_nitrogen_dioxide
-hourly_data["sulphur_dioxide"] = hourly_sulphur_dioxide
-hourly_data["ozone"] = hourly_ozone
-hourly_data["aerosol_optical_depth"] = hourly_aerosol_optical_depth
-hourly_data["dust"] = hourly_dust
-hourly_data["uv_index"] = hourly_uv_index
-hourly_data["uv_index_clear_sky"] = hourly_uv_index_clear_sky
-hourly_data["ammonia"] = hourly_ammonia
-hourly_data["methane"] = hourly_methane
-hourly_data["alder_pollen"] = hourly_alder_pollen
-hourly_data["birch_pollen"] = hourly_birch_pollen
-hourly_data["grass_pollen"] = hourly_grass_pollen
-hourly_data["mugwort_pollen"] = hourly_mugwort_pollen
-hourly_data["olive_pollen"] = hourly_olive_pollen
-hourly_data["ragweed_pollen"] = hourly_ragweed_pollen
-hourly_data["us_aqi"] = hourly_us_aqi
-hourly_data["us_aqi_pm2_5"] = hourly_us_aqi_pm2_5
-hourly_data["us_aqi_pm10"] = hourly_us_aqi_pm10
-hourly_data["us_aqi_nitrogen_dioxide"] = hourly_us_aqi_nitrogen_dioxide
-hourly_data["us_aqi_carbon_monoxide"] = hourly_us_aqi_carbon_monoxide
-hourly_data["us_aqi_ozone"] = hourly_us_aqi_ozone
-hourly_data["us_aqi_sulphur_dioxide"] = hourly_us_aqi_sulphur_dioxide
+aqi_hourly_data["pm10"] = aqi_hourly_pm10
+aqi_hourly_data["pm2_5"] = aqi_hourly_pm2_5
+aqi_hourly_data["carbon_monoxide"] = aqi_hourly_carbon_monoxide
+aqi_hourly_data["carbon_dioxide"] = aqi_hourly_carbon_dioxide
+aqi_hourly_data["nitrogen_dioxide"] = aqi_hourly_nitrogen_dioxide
+aqi_hourly_data["sulphur_dioxide"] = aqi_hourly_sulphur_dioxide
+aqi_hourly_data["ozone"] = aqi_hourly_ozone
+aqi_hourly_data["aerosol_optical_depth"] = aqi_hourly_aerosol_optical_depth
+aqi_hourly_data["dust"] = aqi_hourly_dust
+aqi_hourly_data["uv_index"] = aqi_hourly_uv_index
+aqi_hourly_data["uv_index_clear_sky"] = aqi_hourly_uv_index_clear_sky
+aqi_hourly_data["ammonia"] = aqi_hourly_ammonia
+aqi_hourly_data["methane"] = aqi_hourly_methane
+aqi_hourly_data["alder_pollen"] = aqi_hourly_alder_pollen
+aqi_hourly_data["birch_pollen"] = aqi_hourly_birch_pollen
+aqi_hourly_data["grass_pollen"] = aqi_hourly_grass_pollen
+aqi_hourly_data["mugwort_pollen"] = aqi_hourly_mugwort_pollen
+aqi_hourly_data["olive_pollen"] = aqi_hourly_olive_pollen
+aqi_hourly_data["ragweed_pollen"] = aqi_hourly_ragweed_pollen
+aqi_hourly_data["us_aqi"] = aqi_hourly_us_aqi
+aqi_hourly_data["us_aqi_pm2_5"] = aqi_hourly_us_aqi_pm2_5
+aqi_hourly_data["us_aqi_pm10"] = aqi_hourly_us_aqi_pm10
+aqi_hourly_data["us_aqi_nitrogen_dioxide"] = aqi_hourly_us_aqi_nitrogen_dioxide
+aqi_hourly_data["us_aqi_carbon_monoxide"] = aqi_hourly_us_aqi_carbon_monoxide
+aqi_hourly_data["us_aqi_ozone"] = aqi_hourly_us_aqi_ozone
+aqi_hourly_data["us_aqi_sulphur_dioxide"] = aqi_hourly_us_aqi_sulphur_dioxide
 
-hourly_dataframe = pd.DataFrame(data = hourly_data)
-print(hourly_dataframe)
+aqi_hourly_dataframe = pd.DataFrame(data = aqi_hourly_data)
+print(aqi_hourly_dataframe)
+
