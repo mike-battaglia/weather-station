@@ -44,7 +44,7 @@ meteo_responses = openmeteo.weather_api(meteo_url, params=meteo_params)
 meteo_response = meteo_responses[0]
 print(f"Coordinates {meteo_response.Latitude()}°N {meteo_response.Longitude()}°E")
 print(f"Elevation {meteo_response.Elevation()} m asl")
-print(f"Timezone {meteo_response.Timezone()} meteo_{response.TimezoneAbbreviation()}")
+print(f"Timezone {meteo_response.Timezone()} {meteo_response.TimezoneAbbreviation()}")
 print(f"Timezone difference to GMT+0 {meteo_response.UtcOffsetSeconds()} s")
 
 # Current values. The order of variables needs to be the same as requested.
