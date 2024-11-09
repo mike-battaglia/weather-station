@@ -18,7 +18,7 @@ openmeteo = openmeteo_requests.Client(session = retry_session)
 # Make sure all required weather variables are listed here
 # The order of variables in hourly or daily is important to assign them correctly below
 meteo_url = "https://api.open-meteo.com/v1/forecast"
-meteu_params = {
+meteo_params = {
 	"latitude": 31.3,
 	"longitude": -95.4,
 	"current": ["temperature_2m", "relative_humidity_2m", "apparent_temperature", "is_day", "precipitation", "rain", "showers", "snowfall", "weather_code", "cloud_cover", "pressure_msl", "surface_pressure", "wind_speed_10m", "wind_direction_10m", "wind_gusts_10m"],
