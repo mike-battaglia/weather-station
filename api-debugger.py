@@ -552,13 +552,13 @@ def convert_to_imperial(temp_c, pressure, wind_speed_mps, visibility_m):
 
 def send_data(data):
     print(f"Sending data: {data}")
-    url = WEATHER_DOMAIN
-    headers = {
+    wp_url = WEATHER_DOMAIN
+    wp_headers = {
         'Content-Type': 'application/json',
         'X-API-Key': api_key  # Use the API key defined above
     }
     try:
-        response = requests.post(url, json=data, headers=headers)
+        response = requests.post(wp_url, json=data, headers=wp_headers)
         print(f"Data sent. Server responded with status code: {response.status_code}")
     except Exception as e:
         print(f"Failed to send data: {e}")
