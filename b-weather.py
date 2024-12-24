@@ -1,6 +1,6 @@
 import os
 import smbus2
-import bme280
+# import bme280
 from datetime import datetime
 import pytz
 from math import log, exp
@@ -10,6 +10,25 @@ import requests
 import requests_cache
 from retry_requests import retry
 
+import board
+import busio
+from adafruit_bme280 import Adafruit_BME280_I2C
+
+# Create I2C object
+i2c = busio.I2C(board.SCL, board.SDA)
+
+# Create sensor object
+bme280 = Adafruit_BME280_I2C(i2c)
+
+# Print sensor data
+print(f"Temperature: {bme280.temperature} °C")
+print(f"Pressure: {bme280.pressure} hPa")
+print(f"Humidity: {bme280.humidity} %")
+
+
+
+
+"""
 # Setup the Open-Meteo API client with cache and retry on error
 cache_session = requests_cache.CachedSession('.cache', expire_after = 3600)
 retry_session = retry(cache_session, retries = 5, backoff_factor = 0.2)
@@ -23,7 +42,7 @@ if not wp_api_key:
 
 # Sensor settings
 port = 1
-address = 0x77  # Change to 0x77 if your sensor uses that address
+address = 0x76  # Change to 0x77 if your sensor uses that address
 bus = smbus2.SMBus(port)
 calibration_params = bme280.load_calibration_params(bus, address)
 
@@ -43,3 +62,4 @@ def get_sensor_data():
     except Exception as e:
         print(f"Error getting sensor data: {e}")
         return None, None, None, None
+"""
